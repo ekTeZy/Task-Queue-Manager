@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/error.css') }}">
+{% endblock %}
+
+<div class="error-container">
+    <h1>500</h1>
+    <p>Something went wrong on our side. We're working on it!</p>
+</div>
+{% endblock %}

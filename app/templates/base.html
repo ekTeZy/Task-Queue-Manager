@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Task Manager{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="{{ url_for('index.index_page') }}" class="logo">Task Manager</a>
+            <nav>
+                <a href="{{ url_for('auth.register') }}">Sign Up</a>
+                <a href="{{ url_for('auth.login') }}">Log In</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Футер -->
+    <footer>
+        <p>&copy; 2025 Task Manager. All rights reserved.</p>
+    </footer>
+</body>
+</html>
