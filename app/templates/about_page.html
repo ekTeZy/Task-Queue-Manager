@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<main class="container d-flex flex-column min-vh-100">
+    <section class="about text-center py-5">
+        <h1 class="display-4 fw-bold">About Task Manager</h1>
+        <p class="lead">Task Manager is a web application designed to help users plan, track, and manage their tasks efficiently.</p>
+        <h2 class="mt-4">How to Get Started</h2>
+        <ul class="list-group list-group-flush text-start mx-auto w-75">
+            <li class="list-group-item"><strong>Register:</strong> Create an account through the Register page.</li>
+            <li class="list-group-item"><strong>Login:</strong> Log in to your account via the Login page.</li>
+            <li class="list-group-item"><strong>Create tasks:</strong> Navigate to the Dashboard and start creating tasks.</li>
+        </ul>
+        <h2 class="mt-4">Key Features</h2>
+        <ul class="list-group list-group-flush text-start mx-auto w-75">
+            <li class="list-group-item">Task filtering and prioritization.</li>
+            <li class="list-group-item">Status updates (new, in progress, completed).</li>
+            <li class="list-group-item">Priority management for better task organization.</li>
+        </ul>
+        <h2 class="mt-4">Contact Us</h2>
+        <p>If you have any questions, reach out at <strong>support@taskmanager.com</strong>.</p>
+    </section>
+</main>
+{% endblock %}

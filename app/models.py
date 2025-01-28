@@ -1,16 +1,58 @@
 from app import db
-from datetime import datetime
+from datetime import datetime, timedelta
+from flask_jwt_extended import create_access_token, create_refresh_token
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
     """Модель пользователя"""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default="user") 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     tasks = db.relationship('Task', backref='user', lazy=True)
 
+    def get_token(self, access_expired_time=1, refresh_expired_time=7):
+        """
+        Генерирует access и refresh токены для пользователя.
+
+        :param access_expired_time: Срок действия access токена (в часах).
+        :param refresh_expired_time: Срок действия refresh токена (в днях).
+        :return: Кортеж (access_token, refresh_token).
+        """
+        access_token = create_access_token(
+            identity=str(self.id),
+            additional_claims={"role": self.role},
+            expires_delta=timedelta(hours=access_expired_time)
+        )
+        
+        refresh_token = create_refresh_token(
+            identity=str(self.id),  # Передаём только id как строку
+            expires_delta=timedelta(days=refresh_expired_time)
+        )
+        
+        return access_token, refresh_token
+
+    def __init__(self, **kwargs):
+        self.username = kwargs.get("username")
+        self.email = kwargs.get("email")
+        self.password = generate_password_hash(kwargs.get("password"))
+
+    @classmethod
+    def check_auth(cls, email, password):
+        if not isinstance(email, str) or not isinstance(password, str):
+            raise Exception("Invalid input: email and password must be strings")
+        user = cls.query.filter(cls.email == email).one_or_none()
+
+        if user is None:
+            raise Exception("Invalid email")
+
+        if not check_password_hash(user.password, password):
+            raise Exception("Invalid password")
+
+        return user
+        
     def __repr__(self):
         return f'<User {self.username}>'
 

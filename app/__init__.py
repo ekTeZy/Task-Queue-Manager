@@ -1,16 +1,17 @@
-from flask import Flask, render_template
+from flask import Flask, flash, render_template, redirect, url_for
 import os
+from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from .routes import auth, index, dashboard
 from dotenv import load_dotenv
 # загрузка переменных окружения 
 load_dotenv()
 
 # инициализируем БД
 db = SQLAlchemy()
-from .models import User, Task, TaskLog, Goal
 migrate = Migrate()
+jwt = JWTManager()
+
 
 
 # создание приложения
@@ -21,6 +22,15 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+    jwt.init_app(app)
+    
+    from .models import User, Task, TaskLog, Goal
+    from .routes import auth, index, dashboard
+    
+    @jwt.unauthorized_loader
+    def unauthorized_callback(callback):
+        flash("You must log in to access this page.", "warning")
+        return redirect(url_for("auth.login"))
     
     @app.errorhandler(404)
     def not_found_error(error):

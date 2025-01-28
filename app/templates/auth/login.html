@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Task Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Login</h1>
+    <form method="POST" class="mx-auto w-50">
+        {% for message in get_flashed_messages(with_categories=true) %}
+            <div class="alert {% if message[0] == 'error' %}alert-danger{% elif message[0] == 'success' %}alert-success{% else %}alert-info{% endif %}">
+                {{ message[1] }}
+            </div>
+        {% endfor %}
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <button type="submit" class="btn btn-primary" style="background-color: #ff5722; border-color: #ff5722;">Login</button>
+            <a href="{{ url_for('auth.register') }}" class="text-decoration-none">Don't have an account? Register</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
