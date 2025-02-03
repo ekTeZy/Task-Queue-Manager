@@ -74,15 +74,32 @@ class Task(db.Model):
 
     def __repr__(self):
         return f'<Task {self.title}>'
+    
+    
+class Project(db.Model):
+    """Модель проекта"""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)  
+    structure = db.Column(db.String(50), nullable=False, default="table_struct") 
+    key_fields = db.Column(db.JSON, nullable=True)  
+    task_groups = db.Column(db.JSON, nullable=True)  
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # связь с пользователем
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('projects', lazy=True))
+
+    def __repr__(self):
+        return f'<Project {self.name}>'
 
 
 class TaskLog(db.Model):
     """Модель для логирования изменений задачи"""
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
-    action = db.Column(db.String(128))  # Например, "status_updated", "priority_changed"
-    old_value = db.Column(db.String(128), nullable=True)  # Предыдущее значение
-    new_value = db.Column(db.String(128), nullable=True)  # Новое значение
+    action = db.Column(db.String(128))  # "status_updated", "priority_changed"
+    old_value = db.Column(db.String(128), nullable=True)  # предыдущее значение
+    new_value = db.Column(db.String(128), nullable=True)  # новое значение
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
