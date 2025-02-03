@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Начнем работать вместе!</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/presets.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="preset-body">
+    <div class="preset-container">
+        <div class="row g-0 shadow-lg">
+            <!-- Левая часть с формой -->
+            <div class="col-md-6 d-flex flex-column justify-content-center p-5">
+                <h2 class="preset-title">Начнем работать вместе!</h2>
+                <p class="preset-subtitle">
+                    Придумайте название для вашего проекта. Например, "План маркетинга", "Воронка продаж" или "Дорожная карта"...
+                </p>
+                
+                <form method="POST" action="{{ url_for('dashboard_presets.dashboard_step_1') }}">
+                    <div class="input-group mb-3">
+                        <input 
+                            type="text" 
+                            id="project_name" 
+                            name="project_name" 
+                            class="form-control preset-input"
+                            placeholder="Введите название проекта..."
+                            required
+                        >
+                    </div>
+                    <p class="preset-preview">Название проекта: <span id="preview">Project</span></p>
+                    <button type="submit" class="btn btn-primary preset-btn">Далее →</button>
+                </form>
+            </div>
+
+            <!-- Правая часть с превью -->
+            <div class="col-md-6 d-flex align-items-center justify-content-center preset-preview-box">
+                <div class="preset-mockup">
+                    <h3 class="preset-project-name" id="preview-display">Project</h3>
+                    <div class="preset-dashboard-preview">
+                        <!-- Добавлены три колонки -->
+                        <div class="preset-column">
+                            <span class="preset-card"></span>
+                            <span class="preset-card"></span>
+                            <span class="preset-card"></span>
+                        </div>
+                        <div class="preset-column">
+                            <span class="preset-card"></span>
+                            <span class="preset-card"></span>
+                            <span class="preset-card"></span>
+                        </div>
+                        <div class="preset-column">
+                            <span class="preset-card"></span>
+                            <span class="preset-card"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("project_name").addEventListener("input", function() {
+            const previewElements = document.querySelectorAll("#preview, #preview-display");
+            const name = this.value.trim();
+            previewElements.forEach(el => el.textContent = name || "Project");
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            async function refreshAccessToken() {
+                try {
+                    const response = await fetch("{{ url_for('auth.refresh_token') }}", {
+                        method: "POST",
+                        credentials: "include"
+                    });
+        
+                    if (response.ok) {
+                        console.log("Access token refreshed successfully");
+                    } else {
+                        console.warn("Failed to refresh access token. Redirecting to login...");
+                        window.location.href = "{{ url_for('auth.login') }}";
+                    }
+                } catch (error) {
+                    console.error("Error refreshing access token:", error);
+                }
+            }
+        
+            document.addEventListener("DOMContentLoaded", () => {
+                refreshAccessToken(); 
+                setInterval(refreshAccessToken, 14 * 60 * 1000);
+            });
+        });
+    </script>
+</body>
+</html>

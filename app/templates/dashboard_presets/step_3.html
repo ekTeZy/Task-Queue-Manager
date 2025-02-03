@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор ключевых полей</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/presets.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="preset-body">
+    <div class="preset-container">
+        <div class="row g-0 shadow-lg">
+            <!-- Левая часть с выбором полей -->
+            <div class="col-md-6 d-flex flex-column justify-content-center p-5">
+                <h2 class="preset-title">Выберите ключевые поля задач</h2>
+                <p class="preset-subtitle">
+                    Определите, какие атрибуты важны для ваших задач. Например, владелец, статус, дедлайн или приоритет.
+                </p>
+
+                <form method="POST" action="{{ url_for('dashboard_presets.dashboard_step_4') }}">
+                    <div class="structure-options-task">
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_fields" value="owner" class="task-field">
+                            👤 Владелец
+                        </label>
+                        <label class="structure-option-task active">
+                            <input type="checkbox" name="task_fields" value="status" class="task-field" checked>
+                            ✅ Статус
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_fields" value="due_date" class="task-field">
+                            🗓 Дедлайн
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_fields" value="priority" class="task-field">
+                            🔥 Приоритет
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_fields" value="budget" class="task-field">
+                            💰 Бюджет
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_fields" value="notes" class="task-field">
+                            📝 Заметки
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_fields" value="files" class="task-field">
+                            📁 Файлы
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_fields" value="last_updated" class="task-field">
+                            ⏰ Последнее обновление
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary preset-btn mt-4">Далее →</button>
+                </form>
+            </div>
+
+            <!-- Правая часть с превью -->
+            <div class="col-md-6 d-flex align-items-center justify-content-center preset-preview-box">
+                <div class="preset-task-preview">
+                    <h3 class="preset-project-name">Пример задачи</h3>
+                    <div id="task-preview">
+                        <div class="preset-task-field">
+                            <span class="preset-task-key">✅ <strong>Статус:</strong></span>
+                            <span class="preset-task-value">В процессе</span>
+                        </div>
+                        <div class="preset-task-field">
+                            <span class="preset-task-key">🔥 <strong>Приоритет:</strong></span>
+                            <span class="preset-task-value">Высокий</span>
+                        </div>
+                        <div class="preset-task-field">
+                            <span class="preset-task-key">🗓 <strong>Дедлайн:</strong></span>
+                            <span class="preset-task-value">30 янв.</span>
+                        </div>
+                        <div class="preset-task-field">
+                            <span class="preset-task-key">⏰ <strong>Обновлено:</strong></span>
+                            <span class="preset-task-value">5 мин назад</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkboxes = document.querySelectorAll(".task-field");
+            const taskOptions = document.querySelectorAll(".structure-option-task");
+            const previewContainer = document.getElementById("task-preview");
+        
+            function updatePreview() {
+                previewContainer.innerHTML = "";
+        
+                checkboxes.forEach((checkbox, index) => {
+                    const parent = taskOptions[index]; // Получаем родительский элемент
+        
+                    if (checkbox.checked) {
+                        let fieldName = "";
+                        let value = "";
+        
+                        switch (checkbox.value) {
+                            case "owner":
+                                fieldName = "👤 <strong>Владелец:</strong>";
+                                value = "Иван Петров";
+                                break;
+                            case "status":
+                                fieldName = "✅ <strong>Статус:</strong>";
+                                value = "В процессе";
+                                break;
+                            case "due_date":
+                                fieldName = "🗓 <strong>Дедлайн:</strong>";
+                                value = "30 янв.";
+                                break;
+                            case "priority":
+                                fieldName = "🔥 <strong>Приоритет:</strong>";
+                                value = "Высокий";
+                                break;
+                            case "budget":
+                                fieldName = "💰 <strong>Бюджет:</strong>";
+                                value = "100 000 руб.";
+                                break;
+                            case "notes":
+                                fieldName = "📝 <strong>Заметки:</strong>";
+                                value = "Завершить до конца недели";
+                                break;
+                            case "files":
+                                fieldName = "📁 <strong>Файлы:</strong>";
+                                value = "3 вложения";
+                                break;
+                            case "last_updated":
+                                fieldName = "⏰ <strong>Обновлено:</strong>";
+                                value = "5 мин назад";
+                                break;
+                        }
+        
+                        // Добавляем класс active ко всем выбранным элементам
+                        parent.classList.add("active");
+        
+                        const fieldElement = document.createElement("div");
+                        fieldElement.classList.add("preset-task-field");
+                        fieldElement.innerHTML = `<span class="preset-task-key">${fieldName}</span><span class="preset-task-value">${value}</span>`;
+                        previewContainer.appendChild(fieldElement);
+                    } else {
+                        parent.classList.remove("active"); // Убираем активный класс, если чекбокс снят
+                    }
+                });
+            }
+        
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener("change", updatePreview);
+            });
+        
+            updatePreview();
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            async function refreshAccessToken() {
+                try {
+                    const response = await fetch("{{ url_for('auth.refresh_token') }}", {
+                        method: "POST",
+                        credentials: "include"
+                    });
+        
+                    if (response.ok) {
+                        console.log("Access token refreshed successfully");
+                    } else {
+                        console.warn("Failed to refresh access token. Redirecting to login...");
+                        window.location.href = "{{ url_for('auth.login') }}";
+                    }
+                } catch (error) {
+                    console.error("Error refreshing access token:", error);
+                }
+            }
+        
+            document.addEventListener("DOMContentLoaded", () => {
+                refreshAccessToken(); 
+                setInterval(refreshAccessToken, 14 * 60 * 1000);
+            });
+        });
+    </script>
+</body>
+</html>

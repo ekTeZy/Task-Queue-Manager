@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дополнительные настройки задач</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/presets.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="preset-body">
+    <div class="preset-container">
+        <div class="row g-0 shadow-lg">
+            <!-- Левая часть с выбором настроек -->
+            <div class="col-md-6 d-flex flex-column justify-content-center p-5">
+                <h2 class="preset-title">Выберите дополнительные настройки</h2>
+                <p class="preset-subtitle">
+                    Определите, какие параметры вам важны: уведомления, уровень детализации или доступность.
+                </p>
+
+                <form method="POST" action="{{ url_for('dashboard_presets.dashboard_step_5') }}">
+                    <div class="structure-options-task">
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_settings" value="notifications" class="task-setting">
+                            🔔 Автоуведомления
+                        </label>
+                        <label class="structure-option-task active">
+                            <input type="checkbox" name="task_settings" value="detailed_view" class="task-setting" checked>
+                            📋 Детализация задачи
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_settings" value="roles_access" class="task-setting">
+                            🔑 Ограничение по ролям
+                        </label>
+                        <label class="structure-option-task">
+                            <input type="checkbox" name="task_settings" value="deadline_reminder" class="task-setting">
+                            ⏳ Напоминание о дедлайне
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary preset-btn mt-4">Далее →</button>
+                </form>
+            </div>
+
+            <!-- Правая часть с предпросмотром -->
+            <div class="col-md-6 d-flex align-items-center justify-content-center preset-preview-box">
+                <div class="preset-task-preview">
+                    <h3 class="preset-project-name">Настройки задачи</h3>
+                    <div id="settings-preview">
+                        <div class="preset-task-field">
+                            <span class="preset-task-key">📋 <strong>Детализация:</strong></span>
+                            <span class="preset-task-value">Включена</span>
+                        </div>
+                        <div class="preset-task-field">
+                            <span class="preset-task-key">🔔 <strong>Автоуведомления:</strong></span>
+                            <span class="preset-task-value">Выключены</span>
+                        </div>
+                        <div class="preset-task-field">
+                            <span class="preset-task-key">🔑 <strong>Доступ:</strong></span>
+                            <span class="preset-task-value">Открыт для всех</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkboxes = document.querySelectorAll(".task-setting");
+            const settingsOptions = document.querySelectorAll(".structure-option-task");
+            const previewContainer = document.getElementById("settings-preview");
+        
+            function updatePreview() {
+                previewContainer.innerHTML = "";
+        
+                checkboxes.forEach((checkbox, index) => {
+                    const parent = settingsOptions[index];
+        
+                    if (checkbox.checked) {
+                        let fieldName = "";
+                        let value = "";
+        
+                        switch (checkbox.value) {
+                            case "notifications":
+                                fieldName = "🔔 <strong>Автоуведомления:</strong>";
+                                value = "Включены";
+                                break;
+                            case "detailed_view":
+                                fieldName = "📋 <strong>Детализация:</strong>";
+                                value = "Максимальная";
+                                break;
+                            case "roles_access":
+                                fieldName = "🔑 <strong>Ограничение по ролям:</strong>";
+                                value = "Только администраторы";
+                                break;
+                            case "deadline_reminder":
+                                fieldName = "⏳ <strong>Напоминание о дедлайне:</strong>";
+                                value = "За 24 часа до дедлайна";
+                                break;
+                        }
+        
+                        parent.classList.add("active");
+        
+                        const fieldElement = document.createElement("div");
+                        fieldElement.classList.add("preset-task-field");
+                        fieldElement.innerHTML = `<span class="preset-task-key">${fieldName}</span><span class="preset-task-value">${value}</span>`;
+                        previewContainer.appendChild(fieldElement);
+                    } else {
+                        parent.classList.remove("active"); 
+                    }
+                });
+            }
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener("change", updatePreview);
+            });
+
+            updatePreview();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            async function refreshAccessToken() {
+                try {
+                    const response = await fetch("{{ url_for('auth.refresh_token') }}", {
+                        method: "POST",
+                        credentials: "include"
+                    });
+        
+                    if (response.ok) {
+                        console.log("Access token refreshed successfully");
+                    } else {
+                        console.warn("Failed to refresh access token. Redirecting to login...");
+                        window.location.href = "{{ url_for('auth.login') }}";
+                    }
+                } catch (error) {
+                    console.error("Error refreshing access token:", error);
+                }
+            }
+        
+            document.addEventListener("DOMContentLoaded", () => {
+                refreshAccessToken(); 
+                setInterval(refreshAccessToken, 14 * 60 * 1000);
+            });
+        });
+    </script>
+</body>
+</html>
