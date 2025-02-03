@@ -25,7 +25,7 @@ def create_app():
     jwt.init_app(app)
     
     from .models import User, Task, TaskLog, Goal
-    from .routes import auth, index, dashboard
+    from .routes import auth, index, presets, dashboard_main
     
     @jwt.unauthorized_loader
     def unauthorized_callback(callback):
@@ -40,9 +40,14 @@ def create_app():
     def internal_error(error):
         return render_template('500.html'), 500
     
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        flash("Your session has expired. Please log in again.", "warning")
+        return redirect(url_for("auth.login"))
+    
     app.register_blueprint(index.index_bp, url_prefix="/")
     app.register_blueprint(auth.auth_bp, url_prefix="/auth")
-    app.register_blueprint(dashboard.dashboard_bp, url_prefix="/dashboard")
-    
+    app.register_blueprint(presets.presets_bp, url_prefix="/preset")
+    app.register_blueprint(dashboard_main.dashboard_bp, url_prefix="/main")
 
     return app
