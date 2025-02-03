@@ -1,6 +1,9 @@
 import re
 
-def register_validation(**user_data):
+def validate_name(name):
+    return re.sub(r"[^a-zA-Z0-9 _-]", "", name) 
+
+def user_data_validation(**user_data):
     for key in user_data:
         value = user_data.get(key)
 
