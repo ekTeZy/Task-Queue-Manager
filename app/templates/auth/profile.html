@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Profile | {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="row w-75">
+        <!-- Блок настроек профиля -->
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h2 class="profile-title">Profile</h2>
+
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- Profile Form -->
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </form>
+
+                    <!-- Change Password Button -->
+                    <button type="button" class="btn btn-outline-danger mt-3 w-100" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                        Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок перехода в проект -->
+        <div class="col-md-6">
+            <div class="card shadow-lg d-flex align-items-center justify-content-center" style="height: 100%;">
+                <div class="card-body text-center">
+                    <h2 class="profile-title">Projects</h2>
+                    {% if projects %}
+                        {% for project in projects %}
+                            <a href="{{ url_for('dashboard_main.dashboard_main', project_id=project.id) }}" class="btn btn-outline-warning btn-lg w-100 mt-2">
+                                {{ project.name }}
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No projects available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Changing Password -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="current_password" name="current_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
