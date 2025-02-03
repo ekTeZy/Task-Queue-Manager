@@ -1,0 +1,74 @@
+{% extends "dashboard_main/dashboard_base.html" %}
+
+{% block title %}{{ project.name }} - Dashboard{% endblock %}
+
+{% block page_title %}Welcome to "{{ project.name }}"{% endblock %}
+
+{% block content %}
+    <section class="project-info">
+        <h2>Project Structure</h2>
+        <p><strong>Selected Structure:</strong> {{ ", ".join(project.structer) }}</p>
+
+        <h2>Key Task Fields</h2>
+        <ul>
+            {% for field in project.key_fields %}
+                <li>✅ {{ field }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Task Groups</h2>
+        <div class="task-groups">
+            {% for group in project.task_groups %}
+                <button class="btn btn-outline-primary task-group-btn" data-group="{{ group }}">{{ group }}</button>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="task-board">
+        <h2>Active Task Group</h2>
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Responsible</th>
+                    <th>Status</th>
+                    <th>Completion Date</th>
+                </tr>
+            </thead>
+            <tbody id="task-board-content">
+                <tr>
+                    <td>Task 1</td>
+                    <td><span class="task-owner">👤 Ivan Petrov</span></td>
+                    <td><span class="status-badge status-working">Working on it</span></td>
+                    <td>Feb 2</td>
+                </tr>
+                <tr>
+                    <td>Task 2</td>
+                    <td><span class="task-owner">👤 Anna Smirnova</span></td>
+                    <td><span class="status-badge status-done">Done</span></td>
+                    <td>Feb 3</td>
+                </tr>
+                <tr>
+                    <td>Task 3</td>
+                    <td><span class="task-owner">👤 Alexey Ivanov</span></td>
+                    <td><span class="status-badge status-stuck">Stuck</span></td>
+                    <td>Feb 4</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const taskGroupButtons = document.querySelectorAll(".task-group-btn");
+            const taskBoard = document.getElementById("task-board-content");
+
+            taskGroupButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const group = this.dataset.group;
+                    taskBoard.innerHTML = `<tr><td colspan="4"><h3>Task Group: ${group}</h3><p>Tasks for ${group} will be displayed here.</p></td></tr>`;
+                });
+            });
+        });
+    </script>
+{% endblock %}
